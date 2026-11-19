@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bedford part-time job map</title>
+  <meta name="description" content="Mobile map of part-time job prospects within 6 miles of the Mercure Bedford Centre Hotel, Bedford.">
+  <meta name="theme-color" content="#14273d">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" integrity="sha256-YU3qCpj/P06tdPBJGPax0bm6Q1wltfwjsho5TR4+TYc=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" integrity="sha256-YSWCMtmNZNwqex4CEw1nQhvFub2lmU7vcCKP+XVwwXA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#business-list">Skip to business list</a>
+
+  <div id="example-banner" class="example-banner" hidden>
+    <strong>EXAMPLE DATA — not real businesses</strong>
+    <span>Placeholder records for testing only.</span>
+  </div>
+
+  <header class="site-header">
+    <h1>Bedford part-time job map</h1>
+    <p class="subtitle">Part-time prospects within 6 miles of the Mercure Bedford Centre Hotel, Bedford.</p>
+  </header>
+
+  <main>
+    <div id="map" class="map" role="region" aria-label="Map of businesses around the Mercure Bedford Centre Hotel"></div>
+    <p id="map-note" class="map-note" role="status" hidden></p>
+
+    <noscript>
+      <p class="noscript-note">This page needs JavaScript to load the business list and show the map. It sets no cookies and collects no analytics.</p>
+    </noscript>
+
+    <section class="filters" aria-label="Search and filters">
+      <div class="filterbar">
+        <label class="visually-hidden" for="search-input">Search businesses by name, category, address or postcode</label>
+        <input id="search-input" class="search-input" type="search" autocomplete="off" enterkeyhint="search"
+               placeholder="Search name, category, address…">
+        <p id="result-count" class="result-count" role="status" aria-live="polite"></p>
+      </div>
+
+      <div class="scope-bar" role="group" aria-labelledby="scope-label">
+        <p class="chip-group-label" id="scope-label">Show</p>
+        <div class="chips" id="scope-chips">
+          <button type="button" class="chip scope-chip" data-group="scope" data-value="published" aria-pressed="true">Part-time published</button>
+          <button type="button" class="chip scope-chip" data-group="scope" data-value="all" aria-pressed="false">All businesses</button>
+        </div>
+      </div>
+
+      <details class="filters-panel" open>
+        <summary>Filters</summary>
+        <div class="filters-body">
+          <div class="chip-group" role="group" aria-labelledby="distance-label">
+            <p class="chip-group-label" id="distance-label">Max distance</p>
+            <div class="chips" id="distance-chips">
+              <button type="button" class="chip" data-group="distance" data-value="1" aria-pressed="false">1 mile</button>
+              <button type="button" class="chip" data-group="distance" data-value="2" aria-pressed="false">2 miles</button>
+              <button type="button" class="chip" data-group="distance" data-value="3" aria-pressed="false">3 miles</button>
+              <button type="button" class="chip" data-group="distance" data-value="6" aria-pressed="true">6 miles</button>
+            </div>
+          </div>
+
+          <div class="chip-group" role="group" aria-labelledby="category-label">
+            <p class="chip-group-label" id="category-label">Category</p>
+            <div class="chips" id="category-chips">
+              <button type="button" class="chip" data-group="category" data-value="all" aria-pressed="true">All</button>
+            </div>
+          </div>
+
+          <div class="chip-group" role="group" aria-labelledby="travel-label">
+            <p class="chip-group-label" id="travel-label">Travel mode</p>
+            <div class="chips" id="travel-chips">
+              <button type="button" class="chip" data-group="travel" data-value="walking" aria-pressed="true">Walking</button>
+              <button type="button" class="chip" data-group="travel" data-value="driving" aria-pressed="false">Driving</button>
+              <button type="button" class="chip" data-group="travel" data-value="transit" aria-pressed="false">Transit</button>
+            </div>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <section id="status" class="status" role="status" aria-live="polite"></section>
+
+    <section id="business-list" class="business-list" aria-labelledby="list-heading">
+      <h2 id="list-heading" class="visually-hidden">Businesses</h2>
+      <section id="selected-detail" class="selected-detail" aria-labelledby="selected-heading" hidden>
+        <div class="selected-head">
+          <h3 id="selected-heading" class="selected-heading">Selected from the map</h3>
+          <button type="button" id="selected-clear" class="btn btn-ghost selected-clear">Clear</button>
+        </div>
+        <ul id="selected-card" class="cards selected-cards"></ul>
+      </section>
+      <p id="no-matches" class="no-matches" hidden>No businesses match your filters. Try a wider distance, another category, a shorter search, or switching to “All businesses”.</p>
+      <ol id="cards" class="cards"></ol>
+      <div class="load-more-row">
+        <button type="button" id="load-more" class="btn btn-secondary" hidden>Load more</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>
+      Starting point: Mercure Bedford Centre Hotel, 2 St Marys Street, Bedford MK42 0AR —
+      GPS 52.133977, -0.465752, from the
+      <a href="https://all.accor.com/hotel/B541/index.en.shtml" target="_blank" rel="noopener noreferrer">official Accor hotel page</a>
+      (confirmed 19 Nov 2026).
+    </p>
+    <p>
+      Map libraries: <a href="https://leafletjs.com/" target="_blank" rel="noopener noreferrer">Leaflet</a> and
+      <a href="https://github.com/Leaflet/Leaflet.markercluster" target="_blank" rel="noopener noreferrer">Leaflet.markercluster</a>
+      (loaded from the jsDelivr CDN).
+      Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors.
+      Distances are worked out in your browser as the crow flies and are approximate — check opening hours and vacancies before travelling.
+    </p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js" integrity="sha256-Hk4dIpcqOSb0hZjgyvFOP+cEmDXUKKNE/tT542ZbNQg=" crossorigin="anonymous"></script>
+  <script src="app.js"></script>
+</body>
+</html>
